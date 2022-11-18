@@ -43,7 +43,8 @@ const getAllPossibleMoves = (matrixValues) => {
   for (let i = 0; i < matrixValues.length; i++) {
     for (let j = 0; j < matrixValues[i].length; j++) {
       if (matrixValues[i][j] == 9) {
-        emptyPosition = [i, j];
+        emptyPosition[0] = i;
+        emptyPosition[1] = j;
         break outer_loop;
       }
     }
@@ -58,9 +59,44 @@ const getAllPossibleMoves = (matrixValues) => {
     allowedDirections[2] = true;
   if (emptyPosition[1] > 0)
     allowedDirections[3] = true;
-  
-  // TODO: montar matrizes a partir dos movimentos possíveis.
-  // allowedDirections.foreach...
+
+  const newMatrices = [];
+  for (let i = 0; i < allowedDirections.length; i++) {
+    if (allowedDirections[i]) {
+      const newMatrix = matrixValues.map((row) => row.map((value) => value));
+      if (i == 0) {
+        // Movendo o espaço vazio para cima,
+        // valor acima vai para baixo.
+        newMatrix[emptyPosition[0]][emptyPosition[1]] = newMatrix[emptyPosition[0] - 1][emptyPosition[1]];
+        newMatrix[emptyPosition[0] - 1][emptyPosition[1]] = 9;
+        newMatrices.push(newMatrix);
+      }
+      else if (i == 1) {
+        // Movendo o espaço vazio para direita,
+        // valor à direita vai para esquerda.
+        newMatrix[emptyPosition[0]][emptyPosition[1]] = newMatrix[emptyPosition[0]][emptyPosition[1] + 1];
+        newMatrix[emptyPosition[0]][emptyPosition[1] + 1] = 9;
+        newMatrices.push(newMatrix);
+      }
+      else if (i == 2) {
+        // Movendo o espaço vazio para baixo,
+        // valor abaixo vai para cima.
+        newMatrix[emptyPosition[0]][emptyPosition[1]] = newMatrix[emptyPosition[0] + 1][emptyPosition[1]];
+        newMatrix[emptyPosition[0] + 1][emptyPosition[1]] = 9;
+        newMatrices.push(newMatrix);
+      }
+      else if (i == 3) {
+        // Movendo o espaço vazio para esquerda,
+        // valor à esquerda vai para direita.
+        newMatrix[emptyPosition[0]][emptyPosition[1]] = newMatrix[emptyPosition[0]][emptyPosition[1] - 1];
+        newMatrix[emptyPosition[0]][emptyPosition[1] - 1] = 9;
+        newMatrices.push(newMatrix);
+      }
+    }
+  } // For-loop
+
+  // Lista de matrizes possíveis
+  return newMatrices;
 }
 
 //#endregion Declarations
@@ -95,5 +131,7 @@ const updateBoard = (matrixValues) => {
 
 // Inicializando a matriz com os valores na variável board
 updateBoard(board);
+debugger;
+getAllPossibleMoves(board);
 
 //#endregion Initialization
