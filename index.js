@@ -131,7 +131,4 @@ const updateBoard = (matrixValues) => {
 
 // Inicializando a matriz com os valores na variável board
 updateBoard(board);
-debugger;
-getAllPossibleMoves(board);
-
 //#endregion Initialization
