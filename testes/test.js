@@ -1,7 +1,7 @@
 let p = [
-    [1, 2, 3],
-    [0, 4, 6],
-    [7, 5, 8]
+    [0, 1, 6],
+    [2, 3, 7],
+    [5, 8, 4]
 ];
 
 // Tabuleiro "objetivo" (onde se quer chegar)
@@ -122,27 +122,25 @@ let p_sum = -1;
 let usedBoards = [];
 let it = 0;
 while(p_sum != 0) {
-    //console.log('oi');
     // Pega os possíveis movimentos
     let res = getPossibleBoards();
     // Avalia eles por city block
     let eval = [], next;
+    let stuck = false;
     res.forEach(board => eval.push(sum_city_block(board)));
-    //console.log(eval)
     // Pega o melhor deles
     // Se já tiver sido utilizado, coloca um valor absurdo no melhor, e tenta de novo
     next = minFrom(eval);
-    //console.table(res[next].toString())
-    while(usedBoards.includes(res[next].toString())){
-        //console.log(it, p_sum);
+    while(usedBoards.includes(res[next].toString()) && !stuck){
         eval[next] = 999;
         next = minFrom(eval);
-        //console.log("novo valor:", next)
+        if(eval[next] == 999){
+            stuck = true;
+            next = Math.floor(Math.random() * eval.length);
+        }
     }
-    //console.log(next)
     // Adiciona o tabuleiro escolhido aos tabuleiros já utilizados
     usedBoards.push(res[next].toString());
-    //console.log(usedBoards)
     // Troca p pelo escolhido e reavalia a soma
     p = res[next];
     p_sum = sum_city_block(p);
@@ -150,3 +148,4 @@ while(p_sum != 0) {
 }
 
 console.table(p)
+console.log(it, "iterações")
