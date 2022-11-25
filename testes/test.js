@@ -1,7 +1,7 @@
 let p = [
     [1, 2, 3],
-    [5, 6, 0],
-    [7, 8, 4]
+    [0, 4, 6],
+    [7, 5, 8]
 ];
 
 // Tabuleiro "objetivo" (onde se quer chegar)
@@ -43,6 +43,11 @@ function indexOf2D(arr, k) {
 // Função utilitária - cópia profunda de um array 2d
 function deepCopy2D(arr) {
     return JSON.parse(JSON.stringify(arr));
+}
+
+// Função utilitária - retorna a posição do valor mínimo do array
+function minFrom(arr) {
+    return arr.indexOf(Math.min.apply(null, arr));
 }
 
 // Checa se o tabuleiro pode ser resolvido
@@ -97,7 +102,7 @@ function getPossibleBoards() {
     perto ou não de ser resolvido.
     Fonte: https://science.slc.edu/~jmarshall/courses/2005/fall/cs151/lectures/heuristic-search/
 */
-function city_block(b) {
+function sum_city_block(b) {
     let sum = 0;
     for(let i = 0; i < 3; i++) {
         for(let j = 0; j < 3; j++) {
@@ -108,8 +113,40 @@ function city_block(b) {
     return sum;
 }
 
-let res = getPossibleBoards();
+/*let res = getPossibleBoards();
 res.forEach(board => {
-    console.table(board)
-    console.log(isSolvable(board))
-})
+    console.log(sum_city_block(board))
+})*/
+
+let p_sum = -1;
+let usedBoards = [];
+let it = 0;
+while(p_sum != 0) {
+    //console.log('oi');
+    // Pega os possíveis movimentos
+    let res = getPossibleBoards();
+    // Avalia eles por city block
+    let eval = [], next;
+    res.forEach(board => eval.push(sum_city_block(board)));
+    //console.log(eval)
+    // Pega o melhor deles
+    // Se já tiver sido utilizado, coloca um valor absurdo no melhor, e tenta de novo
+    next = minFrom(eval);
+    //console.table(res[next].toString())
+    while(usedBoards.includes(res[next].toString())){
+        //console.log(it, p_sum);
+        eval[next] = 999;
+        next = minFrom(eval);
+        //console.log("novo valor:", next)
+    }
+    //console.log(next)
+    // Adiciona o tabuleiro escolhido aos tabuleiros já utilizados
+    usedBoards.push(res[next].toString());
+    //console.log(usedBoards)
+    // Troca p pelo escolhido e reavalia a soma
+    p = res[next];
+    p_sum = sum_city_block(p);
+    it += 1;
+}
+
+console.table(p)
