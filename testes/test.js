@@ -119,7 +119,7 @@ res.forEach(board => {
 })*/
 
 let p_sum = -1;
-let usedBoards = [];
+let usedBoards = {};
 let it = 0;
 while(p_sum != 0) {
     // Pega os possíveis movimentos
@@ -131,16 +131,25 @@ while(p_sum != 0) {
     // Pega o melhor deles
     // Se já tiver sido utilizado, coloca um valor absurdo no melhor, e tenta de novo
     next = minFrom(eval);
-    while(usedBoards.includes(res[next].toString()) && !stuck){
+    while((usedBoards[res[next].toString()] != undefined) && !stuck){
         eval[next] = 999;
         next = minFrom(eval);
         if(eval[next] == 999){
+            let menosVisitas = 300000; // número propositalmente absurdo
             stuck = true;
-            next = Math.floor(Math.random() * eval.length);
+            for(let i = 0; i < res.length; i++) {
+                if(usedBoards[res[i].toString()] < menosVisitas) {
+                    menosVisitas = usedBoards[res[i].toString()];
+                    next = i;
+                }
+            }
         }
     }
     // Adiciona o tabuleiro escolhido aos tabuleiros já utilizados
-    usedBoards.push(res[next].toString());
+    if(usedBoards[res[next].toString()] === undefined){
+        usedBoards[res[next].toString()] = 0;
+    }
+    usedBoards[res[next].toString()] += 1;
     // Troca p pelo escolhido e reavalia a soma
     p = res[next];
     p_sum = sum_city_block(p);
