@@ -1,7 +1,7 @@
 let p = [
-    [0, 1, 6],
-    [2, 3, 7],
-    [5, 8, 4]
+    [3, 7, 2],
+    [8, 6, 1],
+    [0, 5, 4]
 ];
 
 // Tabuleiro "objetivo" (onde se quer chegar)
