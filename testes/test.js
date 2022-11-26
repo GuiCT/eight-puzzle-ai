@@ -60,6 +60,7 @@ function isSolvable(b) {
 }
 
 // Obtém todos os movimentos possíveis a partir do tabuleiro atual
+// Retorna os movimentos e uma fila com os melhores
 function getPossibleBoards(p) {
     // Posição do espaço vazio
     let [i, j] = indexOf2D(p, 0);
@@ -75,15 +76,17 @@ function getPossibleBoards(p) {
     // o restante é uma funçaõ simples de troca,
     // mas que mantém a matriz original "p" intacta
     let b = [], aux;
-    mov.forEach(m => {
+    const queue = new MinQueue(mov.length);
+    for(let v = 0; v < mov.length; v++) {
         let auxP = deepCopy2D(p);
-        aux = auxP[m[0]][m[1]];
-        auxP[m[0]][m[1]] = 0;
+        aux = auxP[mov[v][0]][mov[v][1]];
+        auxP[mov[v][0]][mov[v][1]] = 0;
         auxP[i][j] = aux;
         b.push(auxP);
-    });
+        queue.push(v, sum_city_block(auxP));
+    }
 
-    return b;
+    return {res: b, queue: queue};
 }
 
 /*
@@ -114,22 +117,14 @@ function greedy_depth_one(puzzle) {
         Neste caso, "ranqueamos" os nós visitados por nº de visitas e decidimos
         continuara pusca pelo menos visitado.
     */
-    let usedBoards = {};
-    let it = 0;
+    let usedBoards = {}, it = 0;
     while(p_sum != 0) {
         // Pega os possíveis movimentos
-        const res = getPossibleBoards(p);
-        // Avalia eles por city block
-        const queue = new MinQueue(res.length);
-        for(let i = 0; i < res.length; i++) {
-            queue.push(i, sum_city_block(res[i]));
-        }
+        const {res, queue} = getPossibleBoards(p);
         // Segunda fila, para possibilidades já usadas. Pode ser necesária.
         const queueAux = new MinQueue(res.length);
-
         // Pega o melhor, aparentemente (nível 1), dos possíveis caminhos
         let next = -1;
-
         // Se todos os caminhos já foram visitados: desempata.
         // Critério de desempate: número de visitas * valor do caminho (original, não absurdo)
         for(let i = 0; i < res.length; i++) {
@@ -140,17 +135,14 @@ function greedy_depth_one(puzzle) {
                 break;
             queueAux.push(i, usedBoards[r] * b_val);
         }
-
         // Tudo repetida
         if(queueAux.size == res.length)
             next = queueAux.pop()
-
         // Adiciona o tabuleiro escolhido aos tabuleiros já utilizados
         const r = res[next].toString();
         if(usedBoards[r] === undefined){
             usedBoards[r] = 0;
         }
-
         usedBoards[r] += 1;
         // Troca p pelo escolhido e reavalia a soma
         p = res[next];
@@ -159,6 +151,12 @@ function greedy_depth_one(puzzle) {
     }
 
     return {board: p, it: it};
+}
+
+function greedy_depth_two(puzzle) {
+    let p = deepCopy2D(puzzle);
+
+    
 }
 
 obj = [
