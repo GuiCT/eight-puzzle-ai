@@ -1,15 +1,4 @@
-let p = [
-    [3, 7, 2],
-    [8, 6, 1],
-    [0, 5, 4]
-];
-
-// Tabuleiro "objetivo" (onde se quer chegar)
-/*let goal = [
-    [1, 2, 3],
-    [5, 6, 0],
-    [7, 8, 4]
-];*/
+let obj;
 
 // Posições objetivo para cada número
 let goal = {
@@ -69,7 +58,7 @@ function isSolvable(b) {
 }
 
 // Obtém todos os movimentos possíveis a partir do tabuleiro atual
-function getPossibleBoards() {
+function getPossibleBoards(p) {
     // Posição do espaço vazio
     let [i, j] = indexOf2D(p, 0);
     // Há métodos mais econômicos de se fazer isso
@@ -113,48 +102,63 @@ function sum_city_block(b) {
     return sum;
 }
 
-/*let res = getPossibleBoards();
-res.forEach(board => {
-    console.log(sum_city_block(board))
-})*/
-
-let p_sum = -1;
-let usedBoards = {};
-let it = 0;
-while(p_sum != 0) {
-    // Pega os possíveis movimentos
-    let res = getPossibleBoards();
-    // Avalia eles por city block
-    let eval = [], next;
-    let stuck = false;
-    res.forEach(board => eval.push(sum_city_block(board)));
-    // Pega o melhor deles
-    // Se já tiver sido utilizado, coloca um valor absurdo no melhor, e tenta de novo
-    next = minFrom(eval);
-    while((usedBoards[res[next].toString()] != undefined) && !stuck){
-        eval[next] = 999;
+function greedy_depth_one(puzzle) {
+    let p = deepCopy2D(puzzle);
+    // Soma dist. city block p/ matriz principal
+    let p_sum = -1;
+    /*
+        É necessário um critério par quebra de loop quando todos
+        os filhos de um nó já foram visitados, mas precisa continuar a busca.
+        Neste caso, "ranqueamos" os nós visitados por nº de visitas e decidimos
+        continuara pusca pelo menos visitado.
+    */
+    let usedBoards = {};
+    let it = 0;
+    while(p_sum != 0) {
+        // Pega os possíveis movimentos
+        let res = getPossibleBoards(p);
+        // Avalia eles por city block
+        let eval = [], next;
+        let stuck = false;
+        res.forEach(board => eval.push(sum_city_block(board)));
+        // Pega o melhor deles
+        // Se já tiver sido utilizado, coloca um valor absurdo no melhor, e tenta de novo
         next = minFrom(eval);
-        if(eval[next] == 999){
-            let menosVisitas = 300000; // número propositalmente absurdo
-            stuck = true;
-            for(let i = 0; i < res.length; i++) {
-                if(usedBoards[res[i].toString()] < menosVisitas) {
-                    menosVisitas = usedBoards[res[i].toString()];
-                    next = i;
+        while((usedBoards[res[next].toString()] != undefined) && !stuck){
+            eval[next] = 999;
+            next = minFrom(eval);
+            if(eval[next] == 999){
+                let menosVisitas = Number.MAX_VALUE; // número propositalmente absurdo
+                stuck = true;
+                for(let i = 0; i < res.length; i++) {
+                    if(usedBoards[res[i].toString()] < menosVisitas) {
+                        menosVisitas = usedBoards[res[i].toString()];
+                        next = i;
+                    }
                 }
             }
         }
+        // Adiciona o tabuleiro escolhido aos tabuleiros já utilizados
+        if(usedBoards[res[next].toString()] === undefined){
+            usedBoards[res[next].toString()] = 0;
+        }
+        usedBoards[res[next].toString()] += 1;
+        // Troca p pelo escolhido e reavalia a soma
+        p = res[next];
+        p_sum = sum_city_block(p);
+        it += 1;
     }
-    // Adiciona o tabuleiro escolhido aos tabuleiros já utilizados
-    if(usedBoards[res[next].toString()] === undefined){
-        usedBoards[res[next].toString()] = 0;
-    }
-    usedBoards[res[next].toString()] += 1;
-    // Troca p pelo escolhido e reavalia a soma
-    p = res[next];
-    p_sum = sum_city_block(p);
-    it += 1;
+
+    return [p, it];
 }
 
-console.table(p)
-console.log(it, "iterações")
+obj = [
+    [8, 7, 0],
+    [2, 4, 6],
+    [1, 5, 3]
+];
+
+let res = greedy_depth_one(obj);
+console.table(obj);
+console.table(res[0]);
+console.log(res[1], "iterações");
