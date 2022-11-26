@@ -1,3 +1,5 @@
+//import { MinQueue } from "heapify";
+
 let obj;
 
 // Posições objetivo para cada número
@@ -118,24 +120,29 @@ function greedy_depth_one(puzzle) {
         // Pega os possíveis movimentos
         let res = getPossibleBoards(p);
         // Avalia eles por city block
-        let eval = [], next;
-        let stuck = false;
-        res.forEach(board => eval.push(sum_city_block(board)));
+        let evalp = [], next, evalAux;
+        res.forEach(board => evalp.push(sum_city_block(board)));
+        evalAux = [...evalp];
         // Pega o melhor deles
         // Se já tiver sido utilizado, coloca um valor absurdo no melhor, e tenta de novo
-        next = minFrom(eval);
-        while((usedBoards[res[next].toString()] != undefined) && !stuck){
-            eval[next] = 999;
-            next = minFrom(eval);
-            if(eval[next] == 999){
+        next = minFrom(evalp);
+        while((usedBoards[res[next].toString()] != undefined)){
+            evalp[next] = 999;
+            next = minFrom(evalp);
+            /*
+                Se todos os caminhos já foram visitados: desempata.
+                Critério de desempate: número de visitas * valor do caminho (original, não absurdo)
+            */
+            if(evalp[next] == 999){
                 let menosVisitas = Number.MAX_VALUE; // número propositalmente absurdo
                 stuck = true;
                 for(let i = 0; i < res.length; i++) {
-                    if(usedBoards[res[i].toString()] < menosVisitas) {
-                        menosVisitas = usedBoards[res[i].toString()];
+                    if((usedBoards[res[i].toString()] * evalAux[i]) < menosVisitas) {
+                        menosVisitas = usedBoards[res[i].toString()] * evalAux[i];
                         next = i;
                     }
                 }
+                break; // quebra o while mais interno
             }
         }
         // Adiciona o tabuleiro escolhido aos tabuleiros já utilizados
@@ -149,16 +156,16 @@ function greedy_depth_one(puzzle) {
         it += 1;
     }
 
-    return [p, it];
+    return {board: p, it: it};
 }
 
 obj = [
-    [8, 7, 0],
-    [2, 4, 6],
-    [1, 5, 3]
+    [8,7,0],
+    [2,4,6],
+    [1,5,3]
 ];
 
 let res = greedy_depth_one(obj);
 console.table(obj);
-console.table(res[0]);
-console.log(res[1], "iterações");
+console.table(res.board);
+console.log(res.it, "iterações");
