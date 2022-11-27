@@ -49,15 +49,15 @@ function sum_city_block(b) {
 // Retorna a soma da distância de hamming pro tabuleiro
 // Nos testes ela provou-se melhor para uso com o greedy
 function sum_hamming(b) {
-    let d = 0;
+    let s = 0;
     let board = b.flat();
     for(let i = 0; i < 9; i++){
         if(board[i] != 9){
-            d += Math.abs(i+1 - board[i]);
+            s += Math.abs(i+1 - board[i]);
         }
         
     }
-    return d;
+    return s;
 }
 
 // Obtém todos os movimentos possíveis a partir do tabuleiro atual
