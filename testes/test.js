@@ -41,24 +41,6 @@ function minFrom(arr) {
     return arr.indexOf(Math.min.apply(null, arr));
 }
 
-// Checa se o tabuleiro pode ser resolvido
-// Baseado em: https://math.stackexchange.com/questions/293527/how-to-check-if-a-8-puzzle-is-solvable
-function isSolvable(b) {
-    let bf = b.flat();
-    bf.splice(bf.indexOf(0), 1); // Remove o elemento vazio
-
-    let inv = 0; // Número de inversões possíveis
-    for(let i = 0; i < 8; i++) {
-        for(let j = i + 1; j < 8; j++) {
-            if(bf[j] > bf[i]) {
-                inv++;
-            }
-        }
-    }
-
-    return (inv % 2 === 0);
-}
-
 // Obtém todos os movimentos possíveis a partir do tabuleiro atual
 // Retorna os movimentos e uma fila com os melhores
 function getPossibleBoards(p) {
@@ -133,7 +115,8 @@ function greedy_depth_one(puzzle) {
         // Se nossas opções se esgotaram, pegamos o pai da melhor criança
         // De acordo com o nosso critério de desempate (já apresentado)
         if(queueAux.size == res.length)
-            chosenChild = queueAux.pop();
+            // chosenChild = queueAux.pop();
+            chosenChild = Math.floor(Math.random() * res.length);
 
         const r = res[chosenChild].toString();
         if(usedChildren[r] === undefined)
@@ -165,7 +148,6 @@ function greedy_depth_two(puzzle) {
     let p = deepCopy2D(puzzle);
     let p_sum = -1;
     let usedChildren = {}, it = 0;
-    usedChildren[p.toString()] = 1;
     while(p_sum != 0) {
         let chosenChild = -1;
         // Pega os possíveis movimentos
@@ -187,8 +169,10 @@ function greedy_depth_two(puzzle) {
         }
         // Se nossas opções se esgotaram, pegamos o pai da melhor criança
         // De acordo com o nosso critério de desempate (já apresentado)
-        if(queueAux.size == res.length)
-            chosenChild = queueAux.pop();
+        if(queueAux.size == res.length) {
+            //chosenChild = queueAux.pop();
+            chosenChild = Math.floor(Math.random() * res.length);
+        }
 
         const r = res[chosenChild].board.toString();
         if(usedChildren[r] === undefined)
@@ -203,8 +187,12 @@ function greedy_depth_two(puzzle) {
     return {board: p, it: it};
 }
 
-// Para o A*, achamos melhor implementar uma classe,
-// para melhor visualizar as propriedades de cada nó.
+/*
+    Para o A*, achamos melhor implementar uma classe,
+    para melhor visualizar as propriedades de cada nó.
+    Ademais, como a busca agora é diferente, a quantidade de movimentos
+    não é mais simplesmente (nº de interções + 1).
+*/
 class BoardLeaf {
     constructor(board, parent) {
         this.board = board;
@@ -242,7 +230,7 @@ function a_star(puzzle) {
 
     // Array com os nós já abertos
     let used = [p];
-    const queue = new MinQueue(362880);
+    const queue = new MinQueue(3628800);
 
     // A variável p_sum, neste caso, é desnecessária, visto que p.h já indica
     // se o tabuleiro é o final ou não
@@ -262,22 +250,48 @@ function a_star(puzzle) {
     return {board: p.board, it: it, path: p.path};
 }
 
-obj = [[1,2,3],[4,5,9],[6,7,8]];
+// Function to shuffle the board, preventing it from being already solved
+function shuffle(board, number_of_shuffles) {
+    let i = 0;
+    let last_move = -1;
+    while(i < number_of_shuffles) {
+        const moves = getPossibleBoards(board).res;
+        const move = Math.floor(Math.random() * moves.length);
+        if(moves[move].toString() != last_move) {
+            board = moves[move];
+            last_move = moves[move].toString();;
+            i++;
+        }
+    }
+    return board;
+}
 
-console.log(isSolvable(obj));
+obj = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+];
 
-let res = greedy_depth_one(obj);
-let res2 = greedy_depth_two(obj);
-let res3 = a_star(obj);
-console.table(obj);
-console.table(res.board);
-console.log(res.it, "iterações");
+obj = shuffle(obj, 100);
 
-console.table(obj);
-console.table(res2.board);
-console.log(res2.it, "iterações");
+let res, res2, res3;
+setTimeout(function(){
+    res = greedy_depth_one(obj);
+    console.log("\nGreedy Heurística 1");
+    console.table(res.board);
+    console.log(res.it + 1, "movimentos");
+}, 0);
 
-console.table(obj);
-console.table(res3.board);
-console.log(res3.it, "iterações");
-console.log(Object.keys(res3.path).length, "disfarçada");
+setTimeout(function(){
+    res2 = greedy_depth_two(obj);
+    console.log("\nGreedy Heurística 2");
+    console.table(res2.board);
+    console.log(res2.it + 1, "movimentos");
+}, 0);
+
+setTimeout(function(){
+    res3 = a_star(obj);
+    console.log("\nA*");
+    console.table(res2.board);
+    console.log(Object.keys(res3.path).length - 1, "movimentos");
+}, 0);
