@@ -153,22 +153,78 @@ function greedy_depth_one(puzzle) {
     return {board: p, it: it};
 }
 
+function get_grandchildren(puzzle) {
+    const {res,} = getPossibleBoards(puzzle);
+    const gcQueue = new MinQueue(res.length * 4);
+    let gc = [];
+    for(let i = 0; i < res.length; i++) {
+        getPossibleBoards(res[i]).res.forEach(b => {
+            gc.push({parent: i, board: b})
+            gcQueue.push(gc.length - 1, sum_city_block(b));
+        });
+    }
+    return {parents: res, res: gc, queue: gcQueue};
+}
+
 function greedy_depth_two(puzzle) {
     let p = deepCopy2D(puzzle);
+    let p_sum = -1;
+    let usedBoards = {}, it = 0;
+    while(p_sum != 0) {
+        let next = -1;
+        // Pega os possíveis movimentos
+        const {parents, res, queue} = get_grandchildren(p);
+        const queueAux = new MinQueue(res.length);
+        // Avalia os filhos dos possíveis caminhos
+        // Pega o caminho com o melhor filho
+        // Aplica-se o desempate pelo pai menos visitado
+        for(let i = 0; i < res.length; i++){
+            const b_val = queue.peekPriority();
+            // Vê qual é o pai da melhor criança
+            next = res[queue.pop()].parent;
+            const r = parents[next].toString();
+            // Se esse pai nunca foi usado, vai nele
+            if(usedBoards[r] == undefined)
+                break;
+            // Senão, vamos ver a próxima melhor criança, e pegar o pai dela
+            queueAux.push(i, usedBoards[r] * b_val);
+        }
+        // Se nossas opções se esgotaram, pegamos o pai da melhor criança
+        // De acordo com o nosso critério de desempate (já apresentado)
+        
+        if(queueAux.size == res.length) {
+            //next = res[queueAux.pop()].parent;
+            next = res[Math.floor(Math.random() * res.length)].parent;
+        }
 
-    
+        const r = parents[next].toString();
+        if(usedBoards[r] === undefined){
+            usedBoards[r] = 0;
+        }
+        usedBoards[r] += 1;
+        p = parents[next];
+        p_sum = sum_city_block(p);
+        it += 1;
+    }
+
+    return {board: p, it: it};
 }
 
 obj = [
-    [8,7,0],
-    [2,4,6],
-    [1,5,3]
+    [7, 5, 2],
+    [8, 1, 4],
+    [0, 3, 6]
 ];
 
 let res = greedy_depth_one(obj);
+let res2 = greedy_depth_two(obj);
 console.table(obj);
 console.table(res.board);
 console.log(res.it, "iterações");
+
+console.table(obj);
+console.table(res2.board);
+console.log(res2.it, "iterações");
 
 /*const queue = new MinQueue();
 queue.push(1, 2);
