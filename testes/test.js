@@ -1,4 +1,4 @@
-const {MinQueue} = require("heapify");
+const { MinQueue } = require("heapify");
 
 let obj;
 
@@ -169,9 +169,9 @@ function get_grandchildren(puzzle) {
 function greedy_depth_two(puzzle) {
     let p = deepCopy2D(puzzle);
     let p_sum = -1;
-    let usedBoards = {}, it = 0;
+    let usedChildren = {}, it = 0;
     while(p_sum != 0) {
-        let next = -1;
+        let chosenChild = -1;
         // Pega os possíveis movimentos
         const {parents, res, queue} = get_grandchildren(p);
         const queueAux = new MinQueue(res.length);
@@ -181,28 +181,25 @@ function greedy_depth_two(puzzle) {
         for(let i = 0; i < res.length; i++){
             const b_val = queue.peekPriority();
             // Vê qual é o pai da melhor criança
-            next = res[queue.pop()].parent;
-            const r = parents[next].toString();
+            chosenChild = queue.pop();
+            const r = res[chosenChild].board.toString();
             // Se esse pai nunca foi usado, vai nele
-            if(usedBoards[r] == undefined)
+            if(usedChildren[r] == undefined)
                 break;
             // Senão, vamos ver a próxima melhor criança, e pegar o pai dela
-            queueAux.push(i, usedBoards[r] * b_val);
+            queueAux.push(i, usedChildren[r] * b_val);
         }
         // Se nossas opções se esgotaram, pegamos o pai da melhor criança
         // De acordo com o nosso critério de desempate (já apresentado)
-        
-        if(queueAux.size == res.length) {
-            //next = res[queueAux.pop()].parent;
-            next = res[Math.floor(Math.random() * res.length)].parent;
-        }
+        if(queueAux.size == res.length)
+            chosenChild = queueAux.pop();
 
-        const r = parents[next].toString();
-        if(usedBoards[r] === undefined){
-            usedBoards[r] = 0;
-        }
-        usedBoards[r] += 1;
-        p = parents[next];
+        const r = res[chosenChild].board.toString();
+        if(usedChildren[r] === undefined)
+            usedChildren[r] = 0;
+        
+        usedChildren[r] += 1;
+        p = parents[res[chosenChild].parent];
         p_sum = sum_city_block(p);
         it += 1;
     }
@@ -211,9 +208,9 @@ function greedy_depth_two(puzzle) {
 }
 
 obj = [
-    [7, 5, 2],
-    [8, 1, 4],
-    [0, 3, 6]
+    [4, 8, 1],
+    [2, 3, 5],
+    [0, 7, 6]
 ];
 
 let res = greedy_depth_one(obj);
