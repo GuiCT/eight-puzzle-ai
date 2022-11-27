@@ -109,44 +109,38 @@ function sum_city_block(b) {
 
 function greedy_depth_one(puzzle) {
     let p = deepCopy2D(puzzle);
-    // Soma dist. city block p/ matriz principal
     let p_sum = -1;
-    /*
-        É necessário um critério par quebra de loop quando todos
-        os filhos de um nó já foram visitados, mas precisa continuar a busca.
-        Neste caso, "ranqueamos" os nós visitados por nº de visitas e decidimos
-        continuara pusca pelo menos visitado.
-    */
-    let usedBoards = {}, it = 0;
-    usedBoards[p.toString()] = 1;
+    let usedChildren = {}, it = 0;
     while(p_sum != 0) {
+        let chosenChild = -1;
         // Pega os possíveis movimentos
         const {res, queue} = getPossibleBoards(p);
-        // Segunda fila, para possibilidades já usadas. Pode ser necesária.
         const queueAux = new MinQueue(res.length);
-        // Pega o melhor, aparentemente (nível 1), dos possíveis caminhos
-        let next = -1;
-        // Se todos os caminhos já foram visitados: desempata.
-        // Critério de desempate: número de visitas * valor do caminho (original, não absurdo)
-        for(let i = 0; i < res.length; i++) {
+        // Avalia os filhos dos possíveis caminhos
+        // Pega o caminho com o melhor filho
+        // Aplica-se o desempate pelo pai menos visitado
+        for(let i = 0; i < res.length; i++){
             const b_val = queue.peekPriority();
-            next = queue.pop();
-            const r = res[next].toString();
-            if(usedBoards[r] == undefined)
+            // Vê qual é o pai da melhor criança
+            chosenChild = queue.pop();
+            const r = res[chosenChild].toString();
+            // Se esse pai nunca foi usado, vai nele
+            if(usedChildren[r] == undefined)
                 break;
-            queueAux.push(i, usedBoards[r] * b_val);
+            // Senão, vamos ver a próxima melhor criança, e pegar o pai dela
+            queueAux.push(i, usedChildren[r] * b_val);
         }
-        // Tudo repetida
+        // Se nossas opções se esgotaram, pegamos o pai da melhor criança
+        // De acordo com o nosso critério de desempate (já apresentado)
         if(queueAux.size == res.length)
-            next = queueAux.pop()
-        // Adiciona o tabuleiro escolhido aos tabuleiros já utilizados
-        const r = res[next].toString();
-        if(usedBoards[r] === undefined){
-            usedBoards[r] = 0;
-        }
-        usedBoards[r] += 1;
-        // Troca p pelo escolhido e reavalia a soma
-        p = res[next];
+            chosenChild = queueAux.pop();
+
+        const r = res[chosenChild].toString();
+        if(usedChildren[r] === undefined)
+            usedChildren[r] = 0;
+        
+        usedChildren[r] += 1;
+        p = res[chosenChild];
         p_sum = sum_city_block(p);
         it += 1;
     }
@@ -209,74 +203,16 @@ function greedy_depth_two(puzzle) {
     return {board: p, it: it};
 }
 
-class BoardLeaf {
-    constructor(board, parent) {
-        this.board = board;
-        this.parent = parent;
-        this.g = 0;
-        if(parent !== undefined)
-            this.g = parent.g + 1;
-        this.h = sum_city_block(board);
-    }
-
-    get f() {
-        return this.g + this.h;
-    }
-
-    get children() {
-        const {res,} = getPossibleBoards(this.board);
-        return res.map(b => new BoardLeaf(b, this));
-    }
-
-    get path() {
-        let path = [];
-        let current = this;
-        while(current !== undefined) {
-            path.push(current);
-            current = current.parent;
-        }
-        return path;
-    }
-}
-
-function a_star(puzzle) {
-    let p = new BoardLeaf(puzzle);
-    let i = 1;
-    let it = 0;
-
-    // Array com os nós já abertos
-    let used = [p];
-    const queue = new MinQueue(362880);
-
-    // A variável p_sum, neste caso, é desnecessária, visto que p.h já indica
-    // se o tabuleiro é o final ou não
-    while(p.h != 0) {
-        const children = p.children;
-        // Coloca os filhos de p na fila
-        children.forEach(c => {
-            used.push(c);
-            queue.push(i, c.f);
-            i++;
-        });
-        // Pega o nó com menor f
-        p = used[queue.pop()];
-        it++;
-    }
-
-    console.log(p.path);
-
-    return {board: p.board, it: it};
-}
-
 obj = [
-    [2, 5, 6],
-    [3, 9, 7],
-    [1, 4, 8]
+    [1,2,3],
+    [4,5,9],
+    [6,7,8]
 ];
+
+console.log(isSolvable(obj));
 
 let res = greedy_depth_one(obj);
 let res2 = greedy_depth_two(obj);
-let res3 = a_star(obj);
 console.table(obj);
 console.table(res.board);
 console.log(res.it, "iterações");
@@ -284,10 +220,6 @@ console.log(res.it, "iterações");
 console.table(obj);
 console.table(res2.board);
 console.log(res2.it, "iterações");
-
-console.table(obj);
-console.table(res3.board);
-console.log(res3.it, "iterações");
 
 /*const queue = new MinQueue();
 queue.push(1, 2);
