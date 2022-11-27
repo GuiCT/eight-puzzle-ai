@@ -45,6 +45,11 @@ function shuffleBoard() {
   ];
   frontBoard = shuffle(frontBoard, n_mov);
   boardToFront();
+
+  spnRes.innerHTML = "embaralhado";
+  spnRes.classList.add("errado");
+  spnMov.innerHTML = n_mov;
+  spnMetodo.innerHTML = "-";
 }
 
 // Resolve o tabuleiro, de acordo com o método escolhido pelo usuário
@@ -75,6 +80,7 @@ function solveBoard() {
 
   frontBoard = res.board;
   boardToFront();
+  spnRes.classList.remove("errado");
   spnRes.innerHTML = "solucionado";
   spnMov.innerHTML = n_mov;
   spnMetodo.innerHTML = met_map[metodo];

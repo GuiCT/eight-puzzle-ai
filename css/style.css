@@ -80,6 +80,10 @@ body {
     color: green;
 }
 
+.errado {
+    color: #ff504f!important;
+}
+
 .spnMov, .spnMetodo {
     font-weight: 300;
 }
