@@ -1,0 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,600;0,700;1,400&display=swap');
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: #16161b;
+    color: #fff;
+    font-weight: 300;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 60vw;
+    height: 80vh;
+    margin: 10vh auto;
+}
+
+.grid8 {
+    display: grid;
+    width: 30rem;
+    height: 30rem;
+    gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    margin: 0 auto 30px auto;
+    padding:20px;
+    border: solid 3px #ff504f;
+    border-radius: 20px;
+}
+
+.grid8 > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 32px;
+    background-color: #ff504f;
+    color: #fff;
+    border-radius: 20px;
+    font-weight: 700;
+}
+
+.grid3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 1fr;
+    border: 3px solid #fff;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.grid3 > div:first-of-type {
+    border-right: 3px solid white;
+    margin-right: 20px;
+    padding-right: 20px;
+}
+
+.grid3 > div:last-of-type {
+    border-left: 3px solid white;
+    margin-left: 20px;
+    padding-left: 20px;
+    text-align: center;
+}
+
+#buttons {
+    display: flex;
+    flex-direction: row;
+    margin: 10px 0 0 0;
+    gap: 10px;
+    justify-content: center;
+}
+
+.result{
+    font-weight: 700;
+}
+
+.spnResultado {
+    color: green;
+}
+
+.spnMov, .spnMetodo {
+    font-weight: 300;
+}
+
+button {
+    background: none;
+    border: 3px solid #ff504f;
+    color: #fff;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color:#ff504f;
+}

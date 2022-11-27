@@ -5,7 +5,8 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/normalize.css" />
+  <link rel="stylesheet" href="css/style.css" />
   <title>8-Puzzle</title>
 </head>
 
@@ -24,9 +25,9 @@
     </div>
     <div class="grid3">
       <div class="result">
-        Resultado: solucionado<br>
-        Método: -<br>
-        Qtd. de movimentos: 0
+        Resultado: <span class="spnResultado">solucionado</span><br>
+        Método: <span class="spnMetodo">-</span><br>
+        Qtd. de movimentos: <span class="spnMov">0</span>
       </div>
       <fieldset>
         <legend>Método de resolução:</legend>
@@ -46,6 +47,7 @@
         </div>
       </fieldset>
       <div class="ns">
+        Quantos movimentos para embaralhar?<br>
         <input type="range" id="nshuffle" name="nshuffle" min="1" max="100" step="1" value="20">
         <span>20</span>
       </div>

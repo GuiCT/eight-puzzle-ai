@@ -1,3 +1,12 @@
+const spnRes = document.querySelector(".spnResultado"),
+spnMetodo = document.querySelector(".spnMetodo"),
+spnMov = document.querySelector(".spnMov"),
+met_map = {
+  "greedy_one": "Análise em um nível",
+  "greedy_two": "Análise em dois níveis",
+  "astar": "A*"
+};
+
 // Valor do tabuleiro, método a ser utilizado e número de embaralhamento, em estrutura de dados
 let frontBoard = [
   [1, 2, 3],
@@ -25,7 +34,7 @@ document.querySelector("fieldset").addEventListener("change", (e) => {metodo = e
 document.querySelector("#nshuffle").addEventListener("input", (e) => {
   n_mov = e.target.value;
   document.querySelector(".ns > span").innerHTML =  e.target.value;
-})
+});
 
 // Embaralha o tabuleiro
 function shuffleBoard() {
@@ -66,5 +75,8 @@ function solveBoard() {
 
   frontBoard = res.board;
   boardToFront();
-  alert(`Tabuleiro solucionado!\nForam necessários ${n_mov} movimentos`);
+  spnRes.innerHTML = "solucionado";
+  spnMov.innerHTML = n_mov;
+  spnMetodo.innerHTML = met_map[metodo];
+  //alert(`Tabuleiro solucionado!\nForam necessários ${n_mov} movimentos`);
 }
