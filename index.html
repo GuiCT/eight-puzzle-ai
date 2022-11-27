@@ -1,54 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
-    <title>8-Puzzle</title>
-  </head>
-  <body>
-    <section class="container">
-      <div class="grid8">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <title>8-Puzzle</title>
+</head>
+
+<body>
+  <section class="container">
+    <div class="grid8">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+    <div class="grid3">
+      <div class="result">
+        Resultado: solucionado<br>
+        Método: -<br>
+        Qtd. de movimentos: 0
       </div>
       <fieldset>
         <legend>Método de resolução:</legend>
         <div>
-          <input type="radio" id="greedy_one" name="drone" value="greedy_one"
-                 checked>
+          <input type="radio" id="greedy_one" name="drone" value="greedy_one" checked>
           <label for="greedy_one">Análise em um nível</label>
         </div>
-    
+
         <div>
           <input type="radio" id="greedy_two" name="drone" value="greedy_two">
           <label for="greedy_two">Análise em dois níveis</label>
         </div>
-    
+
         <div>
           <input type="radio" id="astar" name="drone" value="astar">
           <label for="astar">A* (pessoal)</label>
         </div>
-    </fieldset>
-      <div id="buttons">
-        <button onclick="shuffleBoard()">
-          Embaralhar
-        </button>
-        <button onclick="solveBoard()">Solucionar</button>
+      </fieldset>
+      <div class="ns">
+        <input type="range" id="nshuffle" name="nshuffle" min="1" max="100" step="1" value="20">
+        <span>20</span>
       </div>
-    </section>
-    <script src="js/heapify.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/greedy.js"></script>
-    <script src="js/a_star.js"></script>
-    <script src="js/index.js"></script>
-  </body>
+    </div>
+    <div id="buttons">
+      <button onclick="shuffleBoard()">
+        Embaralhar
+      </button>
+      <button onclick="solveBoard()">Solucionar</button>
+    </div>
+  </section>
+  <script src="js/heapify.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/greedy.js"></script>
+  <script src="js/a_star.js"></script>
+  <script src="js/index.js"></script>
+</body>
+
 </html>

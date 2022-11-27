@@ -21,6 +21,12 @@
     border: solid 1px black;
 }
 
+.grid3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 1fr;
+}
+
 #buttons {
     display: flex;
     flex-direction: row;

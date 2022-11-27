@@ -1,11 +1,11 @@
+// Valor do tabuleiro, método a ser utilizado e número de embaralhamento, em estrutura de dados
 let frontBoard = [
   [1, 2, 3],
   [4, 5, 6],
   [7, 8, 9]
-];
+], metodo = "greedy_one", n_mov = 20;
 
-let metodo = "greedy_one";
-
+// Exibe a matrix 3x3 na tela
 function boardToFront() {
   let bf = frontBoard.flat();
   const gridElements = document.querySelectorAll(".grid8 > div");
@@ -15,20 +15,30 @@ function boardToFront() {
   gridElements[bf.indexOf(9)].innerHTML = "";
 }
 
+// Exibe a matriz padrão
 boardToFront();
 
+// Sempre que o usuário mudar o método, atualizar a variável que o guarda
 document.querySelector("fieldset").addEventListener("change", (e) => {metodo = e.target.value});
 
+// Sempre que o usuário mudar o número de embaralhamento, atualizar a variável que o guarda
+document.querySelector("#nshuffle").addEventListener("input", (e) => {
+  n_mov = e.target.value;
+  document.querySelector(".ns > span").innerHTML =  e.target.value;
+})
+
+// Embaralha o tabuleiro
 function shuffleBoard() {
   frontBoard = [
     [1, 2, 3],
     [4, 5, 6],
     [7, 8, 9]
   ];
-  frontBoard = shuffle(frontBoard, 50);
+  frontBoard = shuffle(frontBoard, n_mov);
   boardToFront();
 }
 
+// Resolve o tabuleiro, de acordo com o método escolhido pelo usuário
 function solveBoard() {
   if(frontBoard.toString() === "1,2,3,4,5,6,7,8,9") {
     alert("O tabuleiro já está solucionado.");
