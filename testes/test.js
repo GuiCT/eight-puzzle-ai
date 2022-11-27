@@ -209,14 +209,74 @@ function greedy_depth_two(puzzle) {
     return {board: p, it: it};
 }
 
+class BoardLeaf {
+    constructor(board, parent) {
+        this.board = board;
+        this.parent = parent;
+        this.g = 0;
+        if(parent !== undefined)
+            this.g = parent.g + 1;
+        this.h = sum_city_block(board);
+    }
+
+    get f() {
+        return this.g + this.h;
+    }
+
+    get children() {
+        const {res,} = getPossibleBoards(this.board);
+        return res.map(b => new BoardLeaf(b, this));
+    }
+
+    get path() {
+        let path = [];
+        let current = this;
+        while(current !== undefined) {
+            path.push(current);
+            current = current.parent;
+        }
+        return path;
+    }
+}
+
+function a_star(puzzle) {
+    let p = new BoardLeaf(puzzle);
+    let i = 1;
+    let it = 0;
+
+    // Array com os nós já abertos
+    let used = [p];
+    const queue = new MinQueue(362880);
+
+    // A variável p_sum, neste caso, é desnecessária, visto que p.h já indica
+    // se o tabuleiro é o final ou não
+    while(p.h != 0) {
+        const children = p.children;
+        // Coloca os filhos de p na fila
+        children.forEach(c => {
+            used.push(c);
+            queue.push(i, c.f);
+            i++;
+        });
+        // Pega o nó com menor f
+        p = used[queue.pop()];
+        it++;
+    }
+
+    console.log(p.path);
+
+    return {board: p.board, it: it};
+}
+
 obj = [
-    [4, 8, 1],
-    [2, 3, 5],
-    [9, 7, 6]
+    [2, 5, 6],
+    [3, 9, 7],
+    [1, 4, 8]
 ];
 
 let res = greedy_depth_one(obj);
 let res2 = greedy_depth_two(obj);
+let res3 = a_star(obj);
 console.table(obj);
 console.table(res.board);
 console.log(res.it, "iterações");
@@ -224,6 +284,10 @@ console.log(res.it, "iterações");
 console.table(obj);
 console.table(res2.board);
 console.log(res2.it, "iterações");
+
+console.table(obj);
+console.table(res3.board);
+console.log(res3.it, "iterações");
 
 /*const queue = new MinQueue();
 queue.push(1, 2);
