@@ -12,7 +12,7 @@ let goal = {
     6: [1, 2],
     7: [2, 0],
     8: [2, 1],
-    0: [2, 2]
+    9: [2, 2]
 };
 
 /*
@@ -63,7 +63,7 @@ function isSolvable(b) {
 // Retorna os movimentos e uma fila com os melhores
 function getPossibleBoards(p) {
     // Posição do espaço vazio
-    let [i, j] = indexOf2D(p, 0);
+    let [i, j] = indexOf2D(p, 9);
     // Há métodos mais econômicos de se fazer isso
     // Possíveis novas localizações para o espaço vazio
     let mov = [
@@ -80,7 +80,7 @@ function getPossibleBoards(p) {
     for(let v = 0; v < mov.length; v++) {
         let auxP = deepCopy2D(p);
         aux = auxP[mov[v][0]][mov[v][1]];
-        auxP[mov[v][0]][mov[v][1]] = 0;
+        auxP[mov[v][0]][mov[v][1]] = 9;
         auxP[i][j] = aux;
         b.push(auxP);
         queue.push(v, sum_city_block(auxP));
@@ -118,6 +118,7 @@ function greedy_depth_one(puzzle) {
         continuara pusca pelo menos visitado.
     */
     let usedBoards = {}, it = 0;
+    usedBoards[p.toString()] = 1;
     while(p_sum != 0) {
         // Pega os possíveis movimentos
         const {res, queue} = getPossibleBoards(p);
@@ -170,6 +171,7 @@ function greedy_depth_two(puzzle) {
     let p = deepCopy2D(puzzle);
     let p_sum = -1;
     let usedChildren = {}, it = 0;
+    usedChildren[p.toString()] = 1;
     while(p_sum != 0) {
         let chosenChild = -1;
         // Pega os possíveis movimentos
@@ -210,7 +212,7 @@ function greedy_depth_two(puzzle) {
 obj = [
     [4, 8, 1],
     [2, 3, 5],
-    [0, 7, 6]
+    [9, 7, 6]
 ];
 
 let res = greedy_depth_one(obj);
