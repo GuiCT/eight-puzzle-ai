@@ -19,7 +19,7 @@ class BoardLeaf {
     }
 
     get children() {
-        const {res,} = getPossibleBoards(this.board);
+        const {res,} = getPossibleBoards(this.board, 'city_block');
         return res.map(b => new BoardLeaf(b, this));
     }
 

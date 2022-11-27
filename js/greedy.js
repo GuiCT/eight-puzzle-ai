@@ -5,7 +5,7 @@ function greedy_depth_one(puzzle) {
     while(p_sum != 0) {
         let chosenChild = -1;
         // Pega os possíveis movimentos
-        const {res, queue} = getPossibleBoards(p);
+        const {res, queue} = getPossibleBoards(p, 'hamming');
         const queueAux = new MinQueue(res.length);
         // Avalia os filhos dos possíveis caminhos
         // Pega o caminho com o melhor filho
@@ -33,7 +33,7 @@ function greedy_depth_one(puzzle) {
         
         usedChildren[r] += 1;
         p = res[chosenChild];
-        p_sum = sum_city_block(p);
+        p_sum = sum_hamming(p);
         it += 1;
     }
 
@@ -76,7 +76,7 @@ function greedy_depth_two(puzzle) {
         
         usedChildren[r] += 1;
         p = parents[res[chosenChild].parent];
-        p_sum = sum_city_block(p);
+        p_sum = sum_hamming(p);
         it += 1;
     }
 

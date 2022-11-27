@@ -46,9 +46,23 @@ function sum_city_block(b) {
     return sum;
 }
 
+// Retorna a soma da distância de hamming pro tabuleiro
+// Nos testes ela provou-se melhor para uso com o greedy
+function sum_hamming(b) {
+    let d = 0;
+    let board = b.flat();
+    for(let i = 0; i < 9; i++){
+        if(board[i] != 9){
+            d += Math.abs(i+1 - board[i]);
+        }
+        
+    }
+    return d;
+}
+
 // Obtém todos os movimentos possíveis a partir do tabuleiro atual
 // Retorna os movimentos e uma fila com os melhores
-function getPossibleBoards(p) {
+function getPossibleBoards(p, heur) {
     // Posição do espaço vazio
     let [i, j] = indexOf2D(p, 9);
     // Há métodos mais econômicos de se fazer isso
@@ -70,18 +84,22 @@ function getPossibleBoards(p) {
         auxP[mov[v][0]][mov[v][1]] = 9;
         auxP[i][j] = aux;
         b.push(auxP);
-        queue.push(v, sum_city_block(auxP));
+        if(heur == 'city_block') {
+            queue.push(v, sum_city_block(auxP));
+            continue;
+        }
+        queue.push(v, sum_hamming(auxP));
     }
 
     return {res: b, queue: queue};
 }
 
 function get_grandchildren(puzzle) {
-    const {res,} = getPossibleBoards(puzzle);
+    const {res,} = getPossibleBoards(puzzle, 'hamming');
     const gcQueue = new MinQueue(res.length * 4);
     let gc = [];
     for(let i = 0; i < res.length; i++) {
-        getPossibleBoards(res[i]).res.forEach(b => {
+        getPossibleBoards(res[i], 'hamming').res.forEach(b => {
             gc.push({parent: i, board: b})
             gcQueue.push(gc.length - 1, sum_city_block(b));
         });
@@ -94,7 +112,7 @@ function shuffle(board, number_of_shuffles) {
     let i = 0;
     let last_move = -1;
     while(i < number_of_shuffles) {
-        const moves = getPossibleBoards(board).res;
+        const moves = getPossibleBoards(board, 'city_block').res;
         const move = Math.floor(Math.random() * moves.length);
         if(moves[move].toString() != last_move) {
             board = moves[move];
