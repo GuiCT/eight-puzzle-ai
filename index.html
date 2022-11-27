@@ -20,13 +20,35 @@
         <div></div>
         <div></div>
       </div>
+      <fieldset>
+        <legend>Método de resolução:</legend>
+        <div>
+          <input type="radio" id="greedy_one" name="drone" value="greedy_one"
+                 checked>
+          <label for="greedy_one">Análise em um nível</label>
+        </div>
+    
+        <div>
+          <input type="radio" id="greedy_two" name="drone" value="greedy_two">
+          <label for="greedy_two">Análise em dois níveis</label>
+        </div>
+    
+        <div>
+          <input type="radio" id="astar" name="drone" value="astar">
+          <label for="astar">A* (pessoal)</label>
+        </div>
+    </fieldset>
       <div id="buttons">
-        <button onclick="updateBoard(generateRandomMatrix(200))">
+        <button onclick="shuffleBoard()">
           Embaralhar
         </button>
-        <button>Solucionar</button>
+        <button onclick="solveBoard()">Solucionar</button>
       </div>
     </section>
-    <script src="index.js"></script>
+    <script src="js/heapify.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/greedy.js"></script>
+    <script src="js/a_star.js"></script>
+    <script src="js/index.js"></script>
   </body>
 </html>
